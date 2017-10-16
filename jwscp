@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# Joey Wunderlich
+# scp arguments to preferred server. Does not work with files that have
+# spaces in it (you heathen). Configured for mac. Forces preference
+# configuration if none currently exist.
+#
+# args
+## -p : pull from server to current directory
+## -s, --set : set user connection preferences
+
+userPref="${HOME}/Library/Preferences/${USER}prefjwscp"
+
+if [[ $1 == "-s" || $1 == "--set" || ! -f $userPref ]]
+then
+	echo "Setting connection preferences"
+	echo -n "    Remote username: "
+	read user
+	echo -n "    Remote server: "
+	read server
+	echo -n "    Home directory on server: "
+	read homeDir
+
+	echo $user $server $homeDir > ${userPref}
+	echo "Connection set to home directory ${user}@${server}:${homeDir}"
+	exit 0
+fi
+
+read user server homeDir < ${userPref}
+
+## If pulling
+if [[ $1 == "-p" && $# -gt 1 ]]
+then
+	## concatenate all arguments
+	shift
+	for var in "${@}"
+	do
+		output_val="$output_val $var"
+	done
+	
+	## recursive scp all given files to current directory
+	scp -r ${user}@${server}:"$output_val" "$(pwd)"
+	exit 0
+fi
+
+## Else pushing
+for var in "$@"
+do
+	if [[ -f $var || -d $var ]]
+	then
+		output_val="$output_val $var"
+	else
+		echo "${0}: ${var}: No such file or directory"
+	fi
+done
+
+if [[ -z $output_val ]]
+then
+	echo "${0}: no valid arguments, exiting"
+	exit 1
+else
+	scp -r ${output_val} ${user}@${server}:${homeDir}
+	exit 0
+fi
