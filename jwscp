@@ -14,12 +14,9 @@ userPref="${HOME}/Library/Preferences/${USER}prefjwscp"
 if [[ $1 == "-s" || $1 == "--set" || ! -f $userPref ]]
 then
 	echo "Setting connection preferences"
-	echo -n "    Remote username: "
-	read user
-	echo -n "    Remote server: "
-	read server
-	echo -n "    Home directory on server: "
-	read homeDir
+	read -p "   Remote username: " user
+	read -p "   Remote Server: " server
+	read -p "   Home directory on server: " homeDir
 
 	echo $user $server $homeDir > ${userPref}
 	echo "Connection set to home directory ${user}@${server}:${homeDir}"
