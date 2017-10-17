@@ -36,7 +36,7 @@ then
 	done
 	
 	## recursive scp all given files to current directory
-	scp -r ${user}@${server}:"$output_val" "$(pwd)"
+	scp -r ${user}@${server}:"$output_val" .
 	exit 0
 fi
 
