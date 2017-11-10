@@ -2,14 +2,26 @@
 
 # Joey Wunderlich
 # scp arguments to preferred server. Does not work with files that have
-# spaces in it (you heathen). Configured for mac. Forces preference
-# configuration if none currently exist.
+# spaces in it (if you're a heathen that requires support for this,
+# temporary workaround is to get the folder containing the file as the
+# recursive portion does handle this correctly). Configured for mac.
+# Forces preference configuration if none currently exist.
 #
 # args
+## -u acc : use account 'acc' rather than. Must be first option (for now)
 ## -p : pull from server to current directory
 ## -s, --set : set user connection preferences
 
-userPref="${HOME}/Library/Preferences/${USER}prefjwscp"
+if [[ $1 == "-u" ]]
+then
+	acc=$2
+	shift
+	shift
+else
+	acc=$USER
+fi
+
+userPref="${HOME}/Library/Preferences/${acc}prefjwscp"
 
 if [[ $1 == "-s" || $1 == "--set" || ! -f $userPref ]]
 then
@@ -35,6 +47,8 @@ then
 		output_val="$output_val $var"
 	done
 	
+	# trim leading space
+	output_val=`echo $output_val`
 	## recursive scp all given files to current directory
 	scp -r ${user}@${server}:"$output_val" .
 	exit 0
@@ -51,6 +65,8 @@ do
 	fi
 done
 
+# trim leading space
+output_val=`echo $output_val`
 if [[ -z $output_val ]]
 then
 	echo "${0}: no valid arguments, exiting"
