@@ -8,7 +8,8 @@
 # Forces preference configuration if none currently exist.
 #
 # args
-## -u acc : use account 'acc' rather than. Must be first option (for now)
+## -u acc : use account 'acc' rather than default location.
+## 			Must be first option (for now)
 ## -p : pull from server to current directory
 ## -s, --set : set user connection preferences
 
